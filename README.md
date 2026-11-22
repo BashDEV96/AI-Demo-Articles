@@ -1,18 +1,40 @@
-# Stop Writing Sixty Articles By Hand
+# AI-Demo-Articles
 
-So you bought a WordPress theme. Big dreams, magazine front page, a whole demo that looked like a money printer with a login screen.
+**Stop Writing Sixty Articles By Hand**
 
-You imported the demo and your new site filled up with dozens of articles and cool pictures, exactly like they promised. Then you started reading. Every article is Lorem Ipsum, or a mashup of movie lines, or whatever nonsense the theme developer thought was funny at 2 a.m. in the morning.
+A Python script that reads the placeholder post titles in a WordPress theme demo, asks an AI to write a real article for each one, and swaps out the fake body text. No plugin, no monthly subscription, no word spinner.
 
-**Congratulations. You now have sixty articles to write.**
+---
 
-This little program fixes that. It reads each post title on your site, asks an AI to write a real article for it, and swaps the placeholder text for the new article. No plugin, no monthly subscription, no word spinner.
+## Contents
+
+- [Why this works](#why-this-works)
+- [What this is not](#what-this-is-not)
+- [What you need](#what-you-need)
+- [Setup](#setup)
+- [Running it](#running-it)
+- [Options](#options)
+- [Safe to stop and restart](#safe-to-stop-and-restart)
+- [Customizing the writing](#customizing-the-writing)
+- [Choosing a model](#choosing-a-model)
+- [Troubleshooting](#troubleshooting)
+- [What it does not touch](#what-it-does-not-touch)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
 
 ## Why this works
 
-The theme gave you a shell: dozens of posts with real titles and fake bodies. The titles are useful. The bodies are garbage. All you need is something that reads each title and writes a real article to replace the fake one.
+So you bought a WordPress theme. Big dreams, magazine front page, a whole demo that looked like a money printer with a login screen.
 
-That is not a content empire. That is a loop.
+You imported the demo and your new site filled up with dozens of articles and cool pictures, exactly like they promised. Then you started reading. Every article is Lorem Ipsum, or a mashup of movie lines, or whatever nonsense the theme developer thought was funny at 2 a.m.
+
+**Congratulations. You now have sixty articles to write.**
+
+This little program fixes that. The theme gave you a shell: dozens of posts with real titles and fake bodies. The titles are useful. The bodies are garbage. All you need is something that reads each title and writes a real article to replace the fake one.
+
+That is not a content empire. That is a loop:
 
 1. **Read the title.** The program logs into your site and pulls each post. It ignores the body, since that is what we are replacing.
 2. **Write the replacement.** The title goes to the AI along with the instructions in `Prompts/article.md`: headings, lists, a table if it fits, bold and italic where they help.
@@ -30,7 +52,7 @@ Here is what the program does **not** do:
 
 - **It does not research anything.** It sees a title and writes from whatever the AI already knows. It can be wrong, vague, or confidently make things up, so do not treat the articles as expert advice and do not publish anything you would be embarrassed to defend.
 - **It does not do SEO.** No keywords, no meta descriptions, no clever structure for search engines. The articles are just readable and on topic.
-- **It does not make images.** Your theme's demo pictures stay exactly as they are with an exception of inline images. They get deleted as well.
+- **It does not make images.** Featured images stay as they are. Inline images inside the post body are removed along with the placeholder text.
 - **It does not touch your pages, menus, or categories.** Only the body text of your posts changes.
 - **It does not make your site good.** It makes your site stop being full of Lorem Ipsum. Making it actually good is still your job, and it is a fun one once the garbage is gone.
 - **It does not make money.** It saves you thirty bucks and a weekend. That is the whole pitch.
@@ -41,8 +63,8 @@ If someday you want to write real, researched, strategic content, this will be a
 
 Nothing expensive.
 
-- **A computer with Python 3.** This was built and tested on Linux Mint.
-- **A WordPress site with HTTPS.** Application passwords only work over HTTPS.You can use HTTP sites with a workaround - Google it.
+- **A computer with Python 3.8 or newer.** This was built and tested on Linux Mint.
+- **A WordPress site with HTTPS.** Application passwords only work over HTTPS. You can use HTTP sites with a workaround — Google it.
 - **A WordPress application password.** This lets the program log in without your real password. In WordPress, go to *Users > Profile*, scroll to **Application Passwords**, type a name (anything, like "rewriter"), and click **Add New Application Password**. Copy it somewhere safe, because WordPress will not show it again.
 - **An AI key.** Some options are free:
 
@@ -54,10 +76,17 @@ Nothing expensive.
 
 ## Setup
 
-Put these files in one folder, keeping this layout:
+### Clone the repo
 
 ```
-your-folder/
+git clone https://github.com/BashDEV96/AI-Demo-Articles.git
+cd AI-Demo-Articles
+```
+
+The repo layout:
+
+```
+AI-Demo-Articles/
 ├── rewrite_posts.py
 ├── requirements.txt
 ├── .env.example
@@ -65,18 +94,23 @@ your-folder/
     └── article.md
 ```
 
-Open a terminal in that folder and run:
+### Install dependencies
 
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
 ```
 
 On Windows, activate the virtual environment with `venv\Scripts\activate` instead.
 
-Next, open `.env` in a text editor and fill it in:
+### Configure your environment
+
+```
+cp .env.example .env
+```
+
+Open `.env` in a text editor and fill it in:
 
 | Setting | What to put |
 |---|---|
@@ -87,7 +121,7 @@ Next, open `.env` in a text editor and fill it in:
 | `AI_API_KEY` | Your key from that provider |
 | `AI_MODEL` | The model name from that provider's model list |
 
-The `.env` file is the only thing you need to edit to switch providers or models. Keep it private, since it holds your passwords and key.
+The `.env` file is the only thing you need to edit to switch providers or models. It holds your WordPress application password and AI key, so keep it private. It is listed in `.gitignore` and should never be committed.
 
 ## Running it
 
@@ -162,8 +196,14 @@ If a run sits silent for minutes with no output, the model is probably stuck in 
 
 ## What it does not touch
 
-The program only replaces the text of your posts. Demo images, categories, menus, and your Pages (About, Contact, and so on) are left alone, so those may still contain placeholder content.
+The program only replaces the text of your posts. Featured images, categories, menus, and your Pages (About, Contact, and so on) are left alone, so those may still contain placeholder content. Inline images inside the post body are removed along with the old text.
 
-## The part where you actually do it
+## Contributing
 
-Set up the application password. Grab an AI key. Fill in the `.env` file. Run the dry run, then the real thing. Come back to a site full of articles that read like a person wrote them. Your theme still looks great, your site is finally real, and you did not spend another thirty dollars on a plugin.
+Found a bug or have an idea? [Open an issue](https://github.com/BashDEV96/AI-Demo-Articles/issues) or submit a pull request.
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.
+
+---
