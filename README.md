@@ -204,6 +204,4 @@ Found a bug or have an idea? [Open an issue](https://github.com/BashDEV96/AI-Dem
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
-
----
+GPL 3 — see [LICENSE](LICENSE) for details.
